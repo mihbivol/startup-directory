@@ -10,11 +10,12 @@ import { formSchema } from "@/lib/validation";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/actions";
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState("");
-  const {toast} = useToast();
+  const { toast } = useToast();
   const router = useRouter();
   const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
@@ -26,15 +27,16 @@ const StartupForm = () => {
         pitch,
       };
       await formSchema.parseAsync(formValues);
-/*       if(result.status == 'SUCCESS'){
+      const result = await createPitch(prevState, formData, pitch);
+      if (result.status == "SUCCESS") {
         toast({
-            title: "Success",
-            description: "Please check your inputs and try again",
-            variant: "desctructive",
-          });
-        router.push('/startup/${result.id}');  
+          title: "Success",
+          description: "Please check your inputs and try again",
+          variant: "destructive",
+        });
+        router.push("/startup/${result._id}");
       }
-      return result; */
+      return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.flatten().fieldErrors;
@@ -42,14 +44,14 @@ const StartupForm = () => {
         toast({
           title: "Error",
           description: "Please check your inputs and try again",
-          variant: "desctructive",
+          variant: "destructive",
         });
         return { ...prevState, error: "Validation failed", status: "ERROR" };
       }
       toast({
         title: "Error",
         description: "An unexpected error has occured",
-        variant: "desctructive",
+        variant: "destructive",
       });
       return {
         ...prevState,
