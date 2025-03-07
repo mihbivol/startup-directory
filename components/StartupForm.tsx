@@ -34,7 +34,7 @@ const StartupForm = () => {
           description: "Please check your inputs and try again",
           variant: "destructive",
         });
-        router.push("/startup/${result._id}");
+        router.push(`/startup/${result._id}`);
       }
       return result;
     } catch (error) {
